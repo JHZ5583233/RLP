@@ -17,14 +17,12 @@ def objective(trial):
     action_noise = NormalActionNoise(mean=np.zeros(n_actions),
                                      sigma=0.1 * np.ones(n_actions))
 
-    lr = trial.suggest_float("lr",
+    learning_rat = trial.suggest_float("lr",
                              1e-4, 1e-2,
                              log=True)
     buffer_size = trial.suggest_int("buffer_size",
                                     100000, 2_000_000,
                                     step=100000)
-    learning_starts = trial.suggest_int("learning_starts",
-                                        100, 2000)
     batch_size = trial.suggest_categorical("batch_size",
                                            [64, 128, 256, 512])
     tau = trial.suggest_float("tau",
@@ -36,15 +34,14 @@ def objective(trial):
 
     model = DDPG("MlpPolicy",
                  env,
-                 learning_rate=lr,
+                 learning_rate=learning_rat,
                  buffer_size=buffer_size,
-                 learning_starts=learning_starts,
                  batch_size=batch_size,
                  tau=tau,
                  gamma=gamma,
                  action_noise=action_noise,
                  verbose=1)
-    model.learn(total_timesteps=2000, log_interval=10)
+    model.learn(total_timesteps=1000, log_interval=10)
     vec_env = model.get_env()
 
     obs = vec_env.reset()
@@ -52,13 +49,13 @@ def objective(trial):
     for _ in range(999):
         action, _states = model.predict(obs)
         obs, rewards, dones, info = vec_env.step(action)
-        cumaltive_reward += rewards
+        cumulative_reward += rewards
 
     return cumulative_reward
 
 
 def main():
-    study = optuna.create_study()
+    study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=250)
 
     print(study.best_params)
