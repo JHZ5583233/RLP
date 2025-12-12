@@ -17,7 +17,7 @@ def objective(trial):
     action_noise = NormalActionNoise(mean=np.zeros(n_actions),
                                      sigma=0.1 * np.ones(n_actions))
 
-    learning_rat = trial.suggest_float("lr",
+    learning_rate = trial.suggest_float("learning_rate",
                              1e-4, 1e-2,
                              log=True)
     buffer_size = trial.suggest_int("buffer_size",
@@ -34,7 +34,7 @@ def objective(trial):
 
     model = DDPG("MlpPolicy",
                  env,
-                 learning_rate=learning_rat,
+                 learning_rate=learning_rate,
                  buffer_size=buffer_size,
                  batch_size=batch_size,
                  tau=tau,
