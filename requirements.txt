@@ -3,5 +3,5 @@ gymnasium
 gymnasium[mujoco]
 numpy
 optuna
-stable-baselines3
+stable_baselines3
 torch
