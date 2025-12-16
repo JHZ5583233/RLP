@@ -6,6 +6,7 @@ class MeanReturnCallback(BaseCallback):
     def __init__(self, verbose=0):
         super(MeanReturnCallback, self).__init__(verbose)
         self.returns = []
+        self.mean_returns = []
         self.episode_counts = 0
 
     def _on_training_start(self):
@@ -26,6 +27,7 @@ class MeanReturnCallback(BaseCallback):
         episode_return = sum(self.returns)
         self.returns = []
         mean_return = episode_return / episode_length if episode_length > 0 else 0.0
+        self.mean_returns.append(mean_return)
         self.episode_counts += 1
         logger.info(f"Episode {self.episode_counts} - Length: {episode_length}, Return: {episode_return:.2f}, Mean Return: {mean_return:.2f}")
     
