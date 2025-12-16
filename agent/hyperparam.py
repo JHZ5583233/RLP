@@ -54,7 +54,7 @@ def objective(trial):
     return cumulative_reward
 
 
-def main():
+def create_param():
     study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=250)
 
@@ -65,4 +65,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    create_param()
