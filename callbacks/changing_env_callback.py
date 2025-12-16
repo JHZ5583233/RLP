@@ -6,17 +6,21 @@ class change_env(BaseCallback):
     def __init__(self,
                  period_of_change: int = 1000,
                  amount_change: float = 2.0,
+                 change_viscosity_density: tuple[bool, bool] = (False, False),
                  verbose: int = 0):
         super().__init__(verbose)
         self.period = period_of_change
         self.change = amount_change
+        self.to_change = change_viscosity_density
 
         self.step = 0
 
     def _on_training_start(self) -> None:
         self.env = self.training_env.envs[0].unwrapped
         self.model_mujoco = self.env.model
+
         self.init_viscosity = copy(self.model_mujoco.opt.viscosity)
+        self.init_density = copy(self.model_mujoco.opt.density)
 
         self.step = 0
 
@@ -24,15 +28,23 @@ class change_env(BaseCallback):
         self.step += 1
         ratio = min(self.step/self.period, 1)
 
-        new_val = self.change * self.init_viscosity
-        self.model_mujoco.opt.viscosity = ((ratio *
-                                            (new_val - self.init_viscosity)) +
-                                           self.init_viscosity)
+        if self.to_change[0]:
+            new_val = self.change * self.init_viscosity
+            self.model_mujoco.opt.viscosity = (
+                (ratio * (new_val - self.init_viscosity)) +
+                self.init_viscosity)
+
+        if self.to_change[1]:
+            new_val = self.change * self.init_density
+            self.model_mujoco.opt.density = (
+                (ratio * (new_val - self.init_density)) +
+                self.init_density)
 
         if self.verbose > 0 and self.step % 100 == 0:
             print(
                 f"Step {self.step}: " +
-                f"viscosity = {self.model_mujoco.opt.viscosity}"
+                f"viscosity = {self.model_mujoco.opt.viscosity} " +
+                f"density = {self.model_mujoco.opt.density}"
             )
 
         return True
@@ -51,7 +63,8 @@ def main():
                  verbose=1)
     model.learn(total_timesteps=10000,
                 log_interval=10,
-                callback=change_env(verbose=1))
+                callback=change_env(verbose=1,
+                                    change_viscosity_density=(True, True)))
 
 
 if __name__ == '__main__':
