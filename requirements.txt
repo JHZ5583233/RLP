@@ -1,0 +1,7 @@
+#python = 3.11
+gymnasium
+gymnasium[mujoco]
+numpy
+optuna
+stable-baselines3
+torch
