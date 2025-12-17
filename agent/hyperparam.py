@@ -1,4 +1,5 @@
 import gymnasium as gym
+from gymnasium.wrappers import TimeLimit
 import numpy as np
 import optuna
 import pathlib as pl
@@ -40,13 +41,16 @@ def objective(trial):
         verbose=0
     )
 
-    model.learn(total_timesteps=500_000)
+    model.learn(total_timesteps=5000,
+                progress_bar=True)
 
     eval_env = gym.make("Swimmer-v5")
+    eval_env = TimeLimit(eval_env, max_episode_steps=500)
+    print("evaluating")
     mean_reward, _ = evaluate_policy(
         model,
         eval_env,
-        n_eval_episodes=10,
+        n_eval_episodes=5,
         deterministic=True
     )
 
@@ -57,7 +61,8 @@ def create_param():
     study = optuna.create_study(direction="maximize")
     study.optimize(objective,
                    n_trials=40,
-                   n_jobs=6)
+                   n_jobs=10,
+                   show_progress_bar=True)
 
     print(study.best_params)
     with open(pl.Path(__file__).parent.joinpath("hyper_param.json"),
