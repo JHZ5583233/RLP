@@ -25,6 +25,10 @@ class change_env(BaseCallback):
         self.step = 0
 
     def _on_step(self) -> bool:
+        done = self.locals.get("dones", [False])[0]
+        if done:
+            self.step = 0
+
         self.step += 1
         ratio = min(self.step/self.period, 1)
 
