@@ -10,15 +10,7 @@ if __name__ == "__main__":
     env = gym.make('Swimmer-v5', render_mode="rgb_array")
     callback = MeanReturnCallback()
     hyper_params = load(open(Path(__file__).parent.parent / "agent" / "hyper_param.json", "r"))
-    model = DDPG(
-        "MlpPolicy",
-        env,
-        learning_rate=hyper_params["learning_rate"],
-        gamma=hyper_params["gamma"],
-        tau=hyper_params["tau"],
-        buffer_size=hyper_params["buffer_size"],
-        batch_size=hyper_params["batch_size"],
-        verbose=1
-    )
+    # Continue training from a saved model
+    model = DDPG.load("ddpg_swimmer", env=env, force_reset=True)
     model.learn(total_timesteps=1000000, callback=callback)
     model.save("ddpg_swimmer")
