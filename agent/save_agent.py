@@ -20,5 +20,5 @@ if __name__ == "__main__":
         batch_size=hyper_params["batch_size"],
         verbose=1
     )
-    model.learn(total_timesteps=300000, callback=callback)
+    model.learn(total_timesteps=1000000, callback=callback)
     model.save("ddpg_swimmer")
