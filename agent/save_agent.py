@@ -11,6 +11,6 @@ if __name__ == "__main__":
     callback = MeanReturnCallback()
     hyper_params = load(open(Path(__file__).parent.parent / "agent" / "hyper_param.json", "r"))
     # Continue training from a saved model
-    model = DDPG.load("ddpg_swimmer", env=env, force_reset=True)
-    model.learn(total_timesteps=1000000, callback=callback)
-    model.save("ddpg_swimmer")
+    model = DDPG("MlpPolicy", env, verbose=1)
+    model.learn(total_timesteps=2000000, callback=callback)
+    model.save("ddpg_swimmer_no_optimize")
