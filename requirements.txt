@@ -1,7 +1,8 @@
 #python = 3.11
+torch
 gymnasium
 gymnasium[mujoco]
 numpy
 optuna
 stable-baselines3
-torch
+loguru
