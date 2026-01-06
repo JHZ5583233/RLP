@@ -10,6 +10,7 @@ class FIM_callback(BaseCallback):
         super().__init__(verbose)
         self.step_interval = step_interval
         self.diag_fisher = None
+        self.traces = []
 
     def _on_training_start(self) -> None:
         """
@@ -52,6 +53,7 @@ class FIM_callback(BaseCallback):
 
                 fisher_vector = torch.cat([p.flatten() for p in self.diag_fisher])
                 fisher_trace = fisher_vector.sum().item()
+                self.traces.append(fisher_trace)
                 self.logger.record("fisher/trace", fisher_trace)
                 logger.info(
                     f"computed fisher trace on timestep {self.num_timesteps}: {fisher_trace}"
