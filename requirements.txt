@@ -6,3 +6,4 @@ numpy
 optuna
 stable-baselines3
 loguru
+matplotlib

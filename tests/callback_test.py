@@ -1,7 +1,11 @@
 import gymnasium as gym
-from callbacks.mean_return_callback import MeanReturnCallback
+import sys
 import pathlib as pl
 
+# Add parent directory to path for imports
+sys.path.insert(0, str(pl.Path(__file__).parent.parent))
+
+from callbacks.mean_return_callback import MeanReturnCallback
 from stable_baselines3 import DDPG
 
 from json import load
@@ -23,3 +27,5 @@ model = DDPG(
     verbose=1
 )
 model.learn(total_timesteps=100000, callback=callback)
+
+callback.plot_returns()

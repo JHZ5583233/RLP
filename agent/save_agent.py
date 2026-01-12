@@ -1,5 +1,5 @@
 from callbacks.mean_return_callback import MeanReturnCallback
-from callbacks.fisher_i_m_callback import FIM_callback
+from callbacks.rFIM_callback import RFIM_callback
 import gymnasium as gym
 
 from pathlib import Path
@@ -9,16 +9,23 @@ from json import load, dump
 
 if __name__ == "__main__":
     env = gym.make('Swimmer-v5', render_mode="rgb_array")
-    callback = MeanReturnCallback()
-    fim_callback = FIM_callback()
-    callbacks = [callback, fim_callback]
+    callback_return = MeanReturnCallback()
+    callback_fim = RFIM_callback(plot_path=Path(__file__).parent / "artifacts" / "rFIM_trace.png")
+    callbacks = [callback_return, callback_fim]
     hyper_params = load(open(Path(__file__).parent.parent / "agent" / "hyper_param.json", "r"))
-    # Continue training from a saved model
-    model = DDPG("MlpPolicy", env, verbose=1)
-    model.learn(total_timesteps=5000, callback=callbacks)
-    # model.save("ddpg_swimmer_no_optimize")
-    # Save mean returns to a json file
-    with open("mean_returns.json", "w") as f:
-        dump(callback.mean_returns, f)
-    with open("fisher_information_matrix.json", "w") as f:
-        dump(fim_callback.traces, f)
+
+    model = DDPG("MlpPolicy", env, verbose=1,
+                 learning_rate=hyper_params["learning_rate"],
+                 batch_size=hyper_params["batch_size"],
+                 buffer_size=hyper_params["buffer_size"],
+                 tau=hyper_params["tau"],
+                 gamma=hyper_params["gamma"])
+    model.learn(total_timesteps=2000000, callback=callbacks)
+    model.save("ddpg_swimmer_no_optimize")
+    callback_return.plot_returns(Path(__file__).parent / "artifacts" / "mean_return.png")
+    # Save callback data
+    with open(Path(__file__).parent / "artifacts" / "mean_return_data.json", "w") as f:
+        dump({"episode_returns": callback_return.episode_returns, "mean_returns": callback_return.mean_returns}, f)
+    with open(Path(__file__).parent / "artifacts" / "rFIM_trace_data.json", "w") as f:
+        dump({"relative_trace_history": callback_fim.relative_trace_history, "trace_timesteps": callback_fim.trace_timesteps}, f)
+    env.close()
