@@ -108,14 +108,29 @@ class RFIM_callback(BaseCallback):
         plot_path = pl.Path(path)
         plot_path.parent.mkdir(parents=True, exist_ok=True)
 
-        plt.figure(figsize=(8, 4))
-        plt.plot(self.trace_timesteps, self.relative_trace_history, label="Relative trace")
+        fig, ax = plt.subplots(2, 1,figsize=(10, 5))
+        ax[0].plot(
+            self.trace_timesteps,
+            self.relative_trace_history,
+            label="Relative trace",
+            color="orange",
+        )
+        ax[0].set_title("Relative Fisher Information Trace")
+        ax[0].set_xlabel("Timestep")
+        ax[0].set_ylabel("Trace value")
+        ax[0].legend()
         if self.trace_history:
-            plt.plot(self.trace_timesteps, self.trace_history, label="Absolute trace", alpha=0.6)
-        plt.xlabel("Timestep")
-        plt.ylabel("Trace value")
-        plt.title("Relative Fisher Information Trace")
-        plt.legend()
+            ax[1].plot(
+                self.trace_timesteps,
+                self.trace_history,
+                label="Absolute trace",
+                color="blue",
+            )
+            ax[1].set_title("Absolute Fisher Information Trace")
+            ax[1].set_xlabel("Timestep")
+            ax[1].set_ylabel("Trace value")
+            ax[1].legend()
+
         plt.tight_layout()
         plt.savefig(plot_path)
         plt.close()

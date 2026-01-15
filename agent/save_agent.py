@@ -20,12 +20,12 @@ if __name__ == "__main__":
                  buffer_size=hyper_params["buffer_size"],
                  tau=hyper_params["tau"],
                  gamma=hyper_params["gamma"])
-    model.learn(total_timesteps=2000000, callback=callbacks)
+    model.learn(total_timesteps=1500000, callback=callbacks)
     model.save("ddpg_swimmer_no_optimize")
     callback_return.plot_returns(Path(__file__).parent / "artifacts" / "mean_return.png")
     # Save callback data
     with open(Path(__file__).parent / "artifacts" / "mean_return_data.json", "w") as f:
-        dump({"episode_returns": callback_return.episode_returns, "mean_returns": callback_return.mean_returns}, f)
+        dump({"episode_returns": callback_return.episode_returns, "\n mean_returns": callback_return.mean_returns}, f)
     with open(Path(__file__).parent / "artifacts" / "rFIM_trace_data.json", "w") as f:
-        dump({"relative_trace_history": callback_fim.relative_trace_history, "trace_timesteps": callback_fim.trace_timesteps}, f)
+        dump({"relative_trace_history": callback_fim.relative_trace_history, "\n trace_timesteps": callback_fim.trace_timesteps, "\n trace_history": callback_fim.trace_history}, f)
     env.close()
