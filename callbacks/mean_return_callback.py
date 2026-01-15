@@ -47,15 +47,19 @@ class MeanReturnCallback(BaseCallback):
     
     def plot_returns(self, save_path=None, show=True):
         """Plot the return trace."""
-        fig, ax = plt.subplots(figsize=(10, 6))
-        episodes = list(range(1, len(self.episode_returns) + 1))
-        ax.plot(episodes, self.episode_returns, label='Episode Returns', alpha=0.6)
-        ax.plot(episodes, self.mean_returns, label='Mean Returns', linewidth=2)
-        ax.set_xlabel('Episode')
-        ax.set_ylabel('Return')
-        ax.set_title('Training Return Trace')
-        ax.legend()
-        ax.grid(True, alpha=0.3)
+        fig, ax = plt.subplots(2, 1, figsize=(10, 8))
+        episodes = np.arange(1, self.episode_counts + 1)
+        ax[0].plot(episodes, self.episode_returns, label='Episode Return', color='blue')
+        ax[0].set_title('Episode Returns')
+        ax[0].set_xlabel('Episode')
+        ax[0].set_ylabel('Return')
+        ax[0].legend()
+
+        ax[1].plot(episodes, self.mean_returns, label='Mean Return', color='green')
+        ax[1].set_title('Mean Return Trace')
+        ax[1].set_xlabel('Episode')
+        ax[1].set_ylabel('Mean Return')
+        ax[1].legend()
         
         if save_path:
             plt.savefig(save_path, dpi=150, bbox_inches='tight')
