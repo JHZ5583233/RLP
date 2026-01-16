@@ -1,4 +1,5 @@
 """Train DDPG agent on Swimmer environment."""
+
 import json
 from pathlib import Path
 from typing import Any
@@ -24,13 +25,11 @@ def main() -> None:
     callbacks: list[BaseCallback] = [
         callback_return,
         callback_fim,
-        change_env(1500000, 10, (True, False)),
+        change_env(1125000, 10, (True, False)),
     ]
 
     # Load hyperparameters
-    hyper_param_path = (
-        Path(__file__).parent.parent / "agent" / "hyper_param.json"
-    )
+    hyper_param_path = Path(__file__).parent.parent / "agent" / "hyper_param.json"
     with open(hyper_param_path) as f:
         hyper_params: dict[str, Any] = json.load(f)
 
