@@ -41,7 +41,7 @@ def main() -> None:
     model.learn(total_timesteps=1500000, callback=callbacks)
 
     # Save trained model
-    model.save("ddpg_swimmer_no_optimize")
+    model.save("ddpg_swimmer_no_optimize_half")
 
     # Save visualizations and data
     callback_return.plot_returns(artifact_dir / "mean_return.png")
