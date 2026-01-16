@@ -35,7 +35,7 @@ def main() -> None:
         hyper_params: dict[str, Any] = json.load(f)
 
     # Load pre-trained model
-    model = DDPG.load("ddpgswimmeroptmize", env=env)
+    model = DDPG.load("ddpg_swimmer_optimize", env=env)
 
     # Train model
     model.learn(total_timesteps=1500000, callback=callbacks)
