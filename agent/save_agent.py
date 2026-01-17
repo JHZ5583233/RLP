@@ -24,7 +24,7 @@ def main() -> None:
     callbacks: list[BaseCallback] = [
         callback_return,
         callback_fim,
-        change_env(1500000//2, 10, (True, False)),
+        change_env(1500000, 10, (False, True)),
     ]
 
     # Load hyperparameters
