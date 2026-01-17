@@ -19,11 +19,11 @@ def main() -> None:
     # Initialize callbacks
     artifact_dir = Path(__file__).parent / "artifacts"
     callback_return = MeanReturnCallback()
-    callback_fim = RFIM_callback(plot_path=artifact_dir / "rFIM_trace_500k.png")
+    callback_fim = RFIM_callback(plot_path=artifact_dir / "rFIM_trace_500k_density.png")
     callbacks: list[BaseCallback] = [
         callback_return,
         callback_fim,
-        change_env(500000, 10, (True, False)),
+        change_env(500000, 10, (False, True)),
     ]
 
     # Load hyperparameters
@@ -40,16 +40,16 @@ def main() -> None:
     model.learn(total_timesteps=1500000, callback=callbacks)
 
     # Save trained model
-    model.save("ddpg_swimmer_no_optimize_500k")
+    model.save("ddpg_swimmer_no_optimize_500k_density")
 
     # Save visualizations and data
-    callback_return.plot_returns(artifact_dir / "mean_return_500k.png")
+    callback_return.plot_returns(artifact_dir / "mean_return_500k_density.png")
 
     mean_return_data: dict[str, Any] = {
         "episode_returns": callback_return.episode_returns,
         "mean_returns": callback_return.mean_returns,
     }
-    with open(artifact_dir / "mean_return_data_500k.json", "w") as f:
+    with open(artifact_dir / "mean_return_data_500k_density.json", "w") as f:
         json.dump(mean_return_data, f)
 
     rfim_data: dict[str, Any] = {
@@ -57,7 +57,7 @@ def main() -> None:
         "trace_timesteps": callback_fim.trace_timesteps,
         "trace_history": callback_fim.trace_history,
     }
-    with open(artifact_dir / "rFIM_trace_data_500k.json", "w") as f:
+    with open(artifact_dir / "rFIM_trace_data_500k_density.json", "w") as f:
         json.dump(rfim_data, f)
 
     # Cleanup
